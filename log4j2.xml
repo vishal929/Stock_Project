@@ -2,30 +2,46 @@
 <Configuration status="FATAL">
 	<Appenders>
 		<Console name="LogToConsole" target="SYSTEM_OUT">
-			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>		
+			
 		</Console>
-		<RollingFile name="FatalLog" fileName="logs/Fatal.log" filePattern="logs/Fatal-%d-%i.log.zip">
+		<RollingFile name="FatalLog" fileName="./logs/Fatal.log" filePattern="./logs/Fatal-%d-%i.log.zip">
 			<PatternLayout pattern="%d %p %c{1.} [%t] %m%n"/>
-			<SizeBasedTriggeringPolicy size="1 KB"/>
+			<Policies>
+					<SizeBasedTriggeringPolicy size="10MB" />
+					<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+			</Policies>
+			
 		</RollingFile>
-		<RollingFile name="ErrorLog" fileName="logs/Error.log" filePattern="logs/Error-%d-%i.log.zip">
+		<RollingFile name="ErrorLog" fileName="./logs/Error.log" filePattern="./logs/Error-%d-%i.log.zip">
 			<PatternLayout pattern="%d %p %c{1.} [%t] %m%n"/>
+			<Policies>
+					<SizeBasedTriggeringPolicy size="10MB" />
+					<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+			</Policies>
+			
 		</RollingFile>
-		<RollingFile name="InfoLog" fileName="logs/Info.log" filePattern="logs/Info-%d-%i.log.zip">
+		<RollingFile name="InfoLog" fileName="./logs/Info.log" filePattern="./logs/Info-%d-%i.log.zip">
 			<PatternLayout pattern="%d %p %c{1.} [%t] %m%n"/>
+			<Policies>
+					<SizeBasedTriggeringPolicy size="10MB" />
+					<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+			</Policies>
+			
 		</RollingFile>
 
 	</Appenders>
 	<Loggers>
 		<!-- additivity=false eliminated duplication-->
-		<Logger name="logger" level="TRACE" additivity="false">
+		<Logger name="logger" level="ALL" additivity="false">
 			<AppenderRef ref="FatalLog" level="FATAL"/>
 			<AppenderRef ref="ErrorLog" level="ERROR"/>
 			<AppenderREf ref="InfoLog" level="INFO"/>
 		</Logger>
-		<Root level="error" additivity="false">
-			<AppenderRef ref="FatalLog"/>
+		<Root level="TRACE" additivity="false">
+			<AppenderRef ref="FatalLog" level="FATAL"/>
+			<AppenderRef ref="ErrorLog" level="ERROR"/>
+			<AppenderRef ref="InfoLog" level="INFO"/>
 		</Root>
 	</Loggers>
 </Configuration>
-		
