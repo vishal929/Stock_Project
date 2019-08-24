@@ -40,7 +40,7 @@ public class parseEdgar{
 		//the idea is to create a stock object with a bunch of methods and then write and pull the objects via serialization to and from .yaml files and all the processing of information is done in java
 
 		//initializing logger
-		Logger logger = LogManager.getLogger(parseEdgar.class);
+		Logger logger = LogManager.getLogger("logger");
 	
 		//asking user for stock ticker;
 
