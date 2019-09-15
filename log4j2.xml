@@ -29,6 +29,14 @@
 			</Policies>
 			
 		</RollingFile>
+		<RollingFile name="CombinedLog" fileName="./logs/Combined.log" filePattern="./logs/Combined-%d-%i.log.zip">
+			<PatternLayout pattern="%d %p %c{1.} [%t] %m%n"/>
+			<Policies>
+					<SizeBasedTriggeringPolicy size="10MB" />
+					<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+			</Policies>
+			
+		</RollingFile>
 
 	</Appenders>
 	<Loggers>
@@ -36,7 +44,8 @@
 		<Logger name="logger" level="ALL" additivity="false">
 			<AppenderRef ref="FatalLog" level="FATAL"/>
 			<AppenderRef ref="ErrorLog" level="ERROR"/>
-			<AppenderREf ref="InfoLog" level="INFO"/>
+			<AppenderRef ref="InfoLog" level="INFO"/>
+			<AppenderRef ref="CombinedLog" />
 		</Logger>
 		<Root level="TRACE" additivity="false">
 			<AppenderRef ref="FatalLog" level="FATAL"/>

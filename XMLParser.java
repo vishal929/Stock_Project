@@ -28,7 +28,7 @@ public class XMLParser{
 			selectFinancialData(xmlLine,year,ticker);
 
 
-			logger.info("Finished parsing XML file.");	
+			logger.info("Successfully executed user's request");	
 /*		} catch (Exception e) {
 			logger.fatal("Could not connect to Edgar for parsing xml file! Aborting Process!");	
 			System.out.println("Could not establish connection! Aborting process!");
