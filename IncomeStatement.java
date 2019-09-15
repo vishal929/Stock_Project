@@ -1,4 +1,7 @@
 //income statement object that stock data object has
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
 
 
@@ -9,15 +12,63 @@ public class IncomeStatement{
 	private double netSales;
 	private double costOfSales;
 	private double grossProfit;
-	private double R&DExpense;
-	private double SG&AExpense;
-	private double operatingIncome;
-	private double additionalIncome;
+	private double RAndDExpense;
+	private double SGAndAExpense;
+	private double otherIncomeExpense;
 	private double additionalExpense;
 	private double EBIT;
 	private double EBT;
 	private double incomeTax;
+	private double interestExpense;
 	private double netIncome;
+
+	//hashmap of operations
+	private HashMap<String,Method> description;
+
+	//initializing Hashmap in constructor
+	public IncomeStatement() throws NoSuchMethodException{
+		this.description=new HashMap<String,Method>();
+
+		//filling HashMap with String,Method pairs
+		description.put("Revenues",IncomeStatement.class.getMethod("setNetSales",double.class));
+		description.put("CostOfRevenue",IncomeStatement.class.getMethod("setCostOfSales",double.class));
+		description.put("GrossProfit",IncomeStatement.class.getMethod("setGrossProfit",double.class));
+		description.put("ResearchAndDevelopmentExpense",IncomeStatement.class.getMethod("setRAndDExpense",double.class));
+		description.put("SellingGeneralAndAdministrativeExpense",IncomeStatement.class.getMethod("setSGAndAExpense",double.class));
+		//FIGURE OUT other income/EXPENSE/OPERATING iNCOME
+		description.put("OtherIncomeAndExpense",IncomeStatement.class.getMethod("setOtherIncomeExpense",double.class));
+		//look at note above
+		//FIGURE THIS sTuFF OUT TOO
+		description.put("IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",IncomeStatement.class.getMethod("setEBT",double.class));
+		description.put("IncomeTaxExpenseBenefit",IncomeStatement.class.getMethod("setIncomeTax",double.class));
+		description.put("InterestExpense",IncomeStatement.class.getMethod("setInterestExpense",double.class));
+		description.put("NetIncomeLoss",IncomeStatement.class.getMethod("setNetIncome",double.class));
+
+
+
+	}
+
+	//method to add values to the IncomeStatement
+	public void addItem(String line,int year) throws IllegalAccessException , InvocationTargetException {
+		if (this.description.size()==0) {
+			return;
+		} else {
+			String context = XMLParser.getContext(line);
+			if (!this.description.containsKey(context)){
+				return;
+			} else {
+				String date=XMLParser.getDate(line);
+				if (XMLParser.sameYear(date,year)){
+					//then year matches what the user needs so we can store the data
+					double data = XMLParser.getData(line);
+					Method toDo=this.description.get(context);
+					toDo.invoke(this,data);
+					//removing context from hashmap so the value cannot be changed
+					this.description.remove(context);
+				}
+			}
+		}
+	}
 
 
 	//getter setter methods 
@@ -46,45 +97,30 @@ public class IncomeStatement{
 		return this.grossProfit;
 	}
 
-	public void setR&DExpense(double R&DExpense) {
-		this.R&DExpense=R&DExpense;
+	public void setRAndDExpense(double RAndDExpense) {
+		this.RAndDExpense=RAndDExpense;
 	}
 
-	public double getR&DExpense() {
-		return this.R&DExpense;
+	public double getRAndDExpense() {
+		return this.RAndDExpense;
 	}
 
-	public void setSG&AExpense(double SG&AExpense) {
-		this.SG&AExpense=SG&AExpense;
+	public void setSGAndAExpense(double SGAndAExpense) {
+		this.SGAndAExpense=SGAndAExpense;
 	}
 
-	public double getSG&AExpense() {
-		return this.SG&AExpense;
+	public double getSGAndAExpense() {
+		return this.SGAndAExpense;
+	}
+	
+	public void setOtherIncomeExpense(double otherIncomeExpense) {
+		this.otherIncomeExpense=otherIncomeExpense;
 	}
 
-	public void setOperatingIncome(double operatingIncome) {
-		this.operatingIncome=operatingIncome;
+	public double getOtherIncomeExpense() {
+		return this.otherIncomeExpense;
 	}
 
-	public double getOperatingIncome() {
-		return this.operatingIncome;
-	}
-
-	public void setAdditionalIncome(double additionalIncome) {
-		this.additionalIncome=additionalIncome;
-	}
-
-	public double getAdditionalIncome() {
-		return this.additionalIncome;
-	}
-
-	public void setAdditionalExpense(double additionalExpense) {
-		this.additionalExpense=additionalExpense;
-	}
-
-	public double getAdditionalExpense() {
-		return this.additionalExpense;
-	}
 
 	public void setEBIT(double EBIT) {
 		this.EBIT=EBIT;
@@ -100,6 +136,14 @@ public class IncomeStatement{
 
 	public double getEBT() {
 		return this.EBT;
+	}
+
+	public void setInterestExpense(double interestExpense) {
+		this.interestExpense=interestExpense;
+	}
+
+	public double getInterestExpense(){
+		return this.interestExpense;
 	}
 
 	public void setIncomeTax(double incomeTax) {

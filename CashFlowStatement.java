@@ -1,5 +1,7 @@
 //Cash Flow statement object that stock data object has
-
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
 
 
@@ -18,6 +20,50 @@ public class CashFlowStatement{
 	private double cashPaidForLoans;
 	private double netCashFlowFromFinancing;
 	private double netIncreaseInCash;
+
+	//hashmap for matching description to method
+	private HashMap<String,Method> description;	
+
+	//constructor to initialize hashmap
+	public CashFlowStatement() throws NoSuchMethodException{	
+		this.description=new HashMap<String,Method>();
+		//adding String method pairs to hashmap
+		description.put("NetIncomeLoss",CashFlowStatement.class.getMethod("setNetIncome",double.class));
+		description.put("Depreciation",CashFlowStatement.class.getMethod("setAdjustDepreciation",double.class));
+		description.put("IncreaseDecreaseInInventories",CashFlowStatement.class.getMethod("setAdjustInventory",double.class));
+		description.put("IncreaseDecreaseInReceivables",CashFlowStatement.class.getMethod("setAdjustAccountsReceivable",double.class));
+		description.put("NetCashProvidedByUsedInOperatingActivities",CashFlowStatement.class.getMethod("setNetCashFlowFromOps",double.class));
+		description.put("ProceedsFromSaleOfPropertyPlantAndEquipment",CashFlowStatement.class.getMethod("setCashFromSaleOfPPE",double.class));
+		description.put("PaymentsToAcquirePropertyPlantAndEquipment",CashFlowStatement.class.getMethod("setCashForPurchaseOfEquipment",double.class));
+		description.put("NetCashProvidedByUsedInInvestingActivities",CashFlowStatement.class.getMethod("setNetCashFlowFromInvesting",double.class));
+		description.put("RepaymentsOfLongTermDebtAndCapitalSecurities",CashFlowStatement.class.getMethod("setCashPaidForLoans",double.class));
+		description.put("NetCashProvidedByUsedInFinancingActivities",CashFlowStatement.class.getMethod("setNetCashFlowFromFinancing",double.class));
+		description.put("CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect",CashFlowStatement.class.getMethod("setNetIncreaseInCash",double.class));
+	}
+
+	//logic for adding values to the CashFlowStatement
+	public void addItem(String line,int year) throws IllegalAccessException , InvocationTargetException{
+		if (this.description.size()==0) {
+			return;
+		} else {
+			String context=XMLParser.getContext(line);
+			if (!this.description.containsKey(context)) {
+				return;
+			} else {
+				String date = XMLParser.getDate(line);
+				if (XMLParser.sameYear(date,year)) {
+					double data=XMLParser.getData(line);
+					//then the year matches the users request and we can store the data
+					Method toDo = this.description.get(context);
+					toDo.invoke(this,data);
+					//removing context from hashmap so the value cannot be filled again
+					this.description.remove(context);
+				} else {
+					return;
+				}
+			}
+		}
+	}
 
 	//getter and setter methods
 	
@@ -90,7 +136,7 @@ public class CashFlowStatement{
 	}
 
 	public double getCashPaidForLoans() {
-		return this.cashPaidForLoands;
+		return this.cashPaidForLoans;
 	}
 
 	public void setNetCashFlowFromFinancing(double netCashFlowFromFinancing) {

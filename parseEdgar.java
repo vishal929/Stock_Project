@@ -20,6 +20,8 @@
 
 //IDEA: include Binary Search Tree or hash map of tickers that we have already added to some file so we can quickly check the data if the user chooses
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,7 +46,7 @@ public class parseEdgar{
 	} 
 	*/
 	 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException , IllegalAccessException , InvocationTargetException , NoSuchMethodException{
 		//the idea is to create a stock object with a bunch of methods and then write and pull the objects via serialization to and from .yaml files and all the processing of information is done in java
 
 		//initializing logger
@@ -59,7 +61,8 @@ public class parseEdgar{
 
 		String ticker = reader.nextLine().toUpperCase();
 
-		System.out.println(ticker);
+		System.out.println("Please enter the year the report was filed (i.e 2016 for the 2015 annual report)");
+		int year = reader.nextInt();
 
 		download(ticker,year);
 
@@ -81,17 +84,15 @@ public class parseEdgar{
 
 	//function to make sure year is valid for parsing xml files
 	public static boolean xmlValidYear(int year){
-		if (year <2009 || year>Calendar.getInstance().get(Calendar.YEAR);
- ) {
+		if (year <2009 || year>Calendar.getInstance().get(Calendar.YEAR)){
 			return false;
 		} else {
 			return true;
 		}
 	}
 
-	//passing logger so that we can log from here
 	//this method will download company data if not already present on the system
-	public static void download(String ticker, int year) {
+	public static void download(String ticker, int year) throws IOException , IllegalAccessException , NoSuchMethodException , InvocationTargetException{
 		Logger logger = LogManager.getLogger("logger");
 		ticker=makeValid(ticker);
 		if (ticker.equals("")) {
@@ -114,7 +115,8 @@ public class parseEdgar{
 		//if the ticker leads to no ticker site, we need to log that and then stop
 		//if the ticker leads to ticker site that we have already done, it needs to compare the years to see if our data is out of date or not
 		//if the ticker leads to a new ticker site, then we write the data to a YAML file for the year
-		try{
+		
+//		try{
 
 			logger.info("Connecting to Edgar for "+year+" annual filing for "+ticker);
 
@@ -177,15 +179,18 @@ public class parseEdgar{
 					for (int i=1;i<rows.size();i++) {
 						String date = rows.get(i).child(3).text();
 						String filingYear ="";
-						for (int i=0;i<4;i++) {
-							filingYear+=""+date.charAt(i);
+						for (int j=0;j<4;j++) {
+							filingYear+=""+date.charAt(j);
 						}
 						int yearToCompare=Integer.parseInt(filingYear);
+						System.out.println(yearToCompare);
 						if (year==yearToCompare) {
 							//then we found the filing we want
 							Element link = rows.get(i).getElementById("documentsbutton");
 							String toConnect="https://sec.gov"+link.attr("href");
-							parseData(toConnect,year);
+							System.out.println(toConnect);
+							logger.info("Accessing filings at "+toConnect);
+							parseData(toConnect,year,ticker);
 							return;
 
 
@@ -204,22 +209,18 @@ public class parseEdgar{
 			}
 
 
-		}
-			
-
-
-		} catch(Exception e) {
+	/*	} catch (Exception e) {
 			//if exception happens that means connection cannot be established
 			//Jsoup.connect will throw an IOException if it is unable to connect to the url
 			System.out.println("ABORT");
 			logger.fatal("Could not establish connection to Edgar! Aborting operation.");
-			
-		}
 
+		}
+		*/
 	}
 
 
-	public static void parseData(String link) throws IOException {
+	public static void parseData(String link,int year,String ticker) throws IOException , IllegalAccessException , InvocationTargetException , NoSuchMethodException{
 		Logger logger = LogManager.getLogger("logger");
 		//BIG IDEA:
 		//make hashtables for each financial document with expected data
@@ -228,7 +229,9 @@ public class parseEdgar{
 		//extract the data and then abort the process once all data is extracted
 		//WILL NEED TO USE JAVA IO TO read xml file
 		//need to use Jsoup to parse 10-k site
-		try{
+
+
+//		try{
 			logger.info("Starting process to connect to XML file.");
 			Document toCheck = Jsoup.connect(link).get();
 			//getting table with embedded links
@@ -245,13 +248,18 @@ public class parseEdgar{
 				Elements links = table.get(1).getElementsByTag("a");
 				//below is the link to the xml file we need to parse
 				URL toParse = new URL("https://www.sec.gov"+links.get(0).attr("href"));
+				System.out.println(toParse);
+				logger.info("Accessing xml file at "+toParse);
 				//need to parse data in this URL using xml parse method
+				//will pass year and ticker until they get recorded in YAML file
+				XMLParser.getData(toParse,year,ticker);
 
 			}
-		} catch (Exception e) {
+/*		} catch (Exception e) {
 			logger.fatal("Could not establish connection to Edgar! Aborting process!");
 			System.out.println("Could not establish connection to Edgar! Aborting process!");
 		}
+		*/
 	}
 
 

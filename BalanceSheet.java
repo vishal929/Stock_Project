@@ -1,3 +1,11 @@
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+
+
+
+
+
 //balance sheet object that stock data object has
 
 public class BalanceSheet{
@@ -5,38 +13,34 @@ public class BalanceSheet{
 	//listing out current assets 
 	private double accountsReceivable;
 	private double shortNotesReceivable;
-	private  double cash;
-	private double inventory;
-	private double supplies;
-	private double netCurrentAssets
+	private double cash;
+	private double inventoryNet;
+	private double inventoryFinished;
+	private double inventoryWorkInProcess;
+	private double otherCurrentAssets;
+	private double netCurrentAssets;
 
 	//listing out long term assets (PPE)
 	private double longNotesReceivable;
-	private double land;
-	private double landImprovements;
-	private double buildings;
-	private double equipment
+	private double propertyPlantEquipment;
 	private double accumulatedDepreciation;
 	private double netPropertyPlantEquipment; 
+	private double otherLongAssets;
 	private double netAssets;
 
-	//listing out intangible assets	
-	private double goodwill;
-	private double netIntangibleAssets;
-	
 	//listing out current liabilities
 	private double accountsPayable;
-	private double shortNotesPayable;
-	private double wagesPayable;
-	private double interestPayable;
-	private double taxesPayable;
+	private double shortTermBorrowings;
+	private double shortPortionOfLongDebt;
 	private double unearnedRevenue;
+		//NEED GETTER AND SETTER FOR THESE
+	private double employeeRelatedLiabilities;
+	private double accruedLiabilities;
 	private double netCurrentLiabilities;
 
 	//listing out long Term liabilities
-	private double longNotesPayable;
-	private double bondsPayable;	
-	private double netLongTermLiabilities;
+	private double longDebt;
+	private double otherLongDebt;
 	private double netLiabilities;
 
 	//listing out stockholders equity items
@@ -45,8 +49,87 @@ public class BalanceSheet{
 	private double treasuryStock;
 	private double netStockHoldersEquity;
 
-	//I will leave constructor blank so that default constructor is used
+	//every BalanceSheet object will have a hashmap with Strings mapped to Functions to insert data to make the process efficient and easy
 	
+	private HashMap<String,Method> description;
+
+	public BalanceSheet() throws NoSuchMethodException{
+		//everything starts out null, but on initialization of the object, we initialize the HashMap
+		//putting description for current assets
+		this.description= new HashMap<String,Method>();	
+		description.put("AccountsReceivableNetCurrent",BalanceSheet.class.getMethod("setAccountsReceivable",double.class));
+		description.put("NotesAndLoansReceivableNetCurrent",BalanceSheet.class.getMethod("setShortNotesReceivable",double.class));
+		description.put("CashAndCashEquivalentsAtCarryingValue",BalanceSheet.class.getMethod("setCash",double.class));
+		description.put("InventoryNet",BalanceSheet.class.getMethod("setInventoryNet",double.class));
+		description.put("InventoryFinishedGoodsNetOfReserves",BalanceSheet.class.getMethod("setInventoryFinished",double.class));
+		description.put("InventoryWorkInProcessAndRawMaterialsNetOfReserves",BalanceSheet.class.getMethod("setInventoryWorkInProcess",double.class));
+		description.put("PrepaidExpenseAndOtherAssetsCurrent",BalanceSheet.class.getMethod("setOtherCurrentAssets",double.class));
+		description.put("AssetsCurrent",BalanceSheet.class.getMethod("setNetCurrentAssets",double.class));
+
+		//putting description for long term assets
+		description.put("NotesAndLoansReceivableNetNoncurrent",BalanceSheet.class.getMethod("setLongNotesReceivable",double.class));
+		description.put("PropertyPlantAndEquipmentGross",BalanceSheet.class.getMethod("setPropertyPlantEquipment",double.class));
+		description.put("AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment",BalanceSheet.class.getMethod("setAccumulatedDepreciation",double.class));
+		description.put("PropertyPlantAndEquipmentNet",BalanceSheet.class.getMethod("setNetPropertyPlantEquipment",double.class));
+		description.put("OtherAssetsNoncurrent",BalanceSheet.class.getMethod("setOtherLongAssets",double.class));
+		description.put("Assets",BalanceSheet.class.getMethod("setNetAssets",double.class));
+
+		//putting description for short term liabilities
+		description.put("ShortTermBorrowings",BalanceSheet.class.getMethod("setShortTermBorrowings",double.class));
+		description.put("AccountsPayableCurrent",BalanceSheet.class.getMethod("setAccountsPayable",double.class));
+		description.put("LongTermDebtCurrent",BalanceSheet.class.getMethod("setShortPortionOfLongDebt",double.class));
+		description.put("RevenueRemainingPerformanceObligation",BalanceSheet.class.getMethod("setUnearnedRevenue",double.class));
+		description.put("EmployeeRelatedLiabilitiesCurrent",BalanceSheet.class.getMethod("setEmployeeRelatedLiabilities",double.class));
+		description.put("AccruedLiabilities",BalanceSheet.class.getMethod("setAccruedLiabilities",double.class));
+		description.put("LiabilitiesCurrent",BalanceSheet.class.getMethod("setNetCurrentLiabilities",double.class));
+
+		//putting description for long term debt
+		description.put("LongTermDebtNoncurrent",BalanceSheet.class.getMethod("setLongDebt",double.class));
+		description.put("OtherLiabilitiesNoncurrent",BalanceSheet.class.getMethod("setOtherLongDebt",double.class));
+		description.put("Liabilities",BalanceSheet.class.getMethod("setNetLiabilities",double.class));
+		
+		//putting description for stockholders equity
+		description.put("CommonStocksIncludingAdditionalPaidInCapital",BalanceSheet.class.getMethod("setCommonStock",double.class));
+		description.put("RetainedEarningsAccumulatedDeficit",BalanceSheet.class.getMethod("setRetainedEarnings",double.class));
+		description.put("TreasuryStockCommonValue",BalanceSheet.class.getMethod("setTreasuryStock",double.class));
+		description.put("StockholdersEquity",BalanceSheet.class.getMethod("setNetStockHoldersEquity",double.class));
+	}
+
+	//logic for adding values to the BalanceSheet
+	//sameYear boolean is just to check whether the year matches the year the user is looking for	
+	public void addItem(String line,int year) throws IllegalAccessException , InvocationTargetException {
+		
+		//calling the method to populate the data in the balance sheet and then remove the value that was added from the hashmap
+		
+		if (this.description.size()==0) {
+			return;
+		} else {
+			String context = XMLParser.getContext(line);
+			if (!this.description.containsKey(context)) {
+				return;
+			} else {
+				String date = XMLParser.getDate(line);
+				if (XMLParser.sameYear(date,year)) {
+					double data = XMLParser.getData(line);
+					//then the year matches what the user needs and we can store the data
+					Method toDo = this.description.get(context);
+					toDo.invoke(this,data);
+					//removing context from hashmap so the value cannot be filled again
+					this.description.remove(context);
+
+				} else {
+					return;
+				}
+
+				
+			}
+		}
+		
+		
+
+	}
+
+
 	//getter and setter methods for each private entry:
 	
 	public void setAccountsReceivable(double accountsReceivable) {
@@ -73,20 +156,36 @@ public class BalanceSheet{
 		return this.cash;
 	}
 
-	public void setInventory(double inventory) {
-		this.inventory=inventory;
+	public void setInventoryNet(double inventoryNet) {
+		this.inventoryNet=inventoryNet;
 	}
 
-	public double getInventory() {
-		return this.inventory;
+	public double getInventoryNet() {
+		return this.inventoryNet;
 	}
 
-	public void setSupplies(double supplies) {
-		this.supplies=supplies;
+	public void setInventoryFinished(double inventoryFinished) {
+		this.inventoryFinished=inventoryFinished;
 	}
 
-	public double getSupplies() {
-		return this.supplies;
+	public double getInventoryFinished() {
+		return this.inventoryFinished;
+	}
+
+	public void setInventoryWorkInProcess(double inventoryWorkInProcess) {
+		this.inventoryWorkInProcess=inventoryWorkInProcess;
+	}
+
+	public double getInventoryWorkInProcess() {
+		return this.inventoryWorkInProcess;
+	}
+
+	public void setOtherCurrentAssets(double otherCurrentAssets) {
+		this.otherCurrentAssets=otherCurrentAssets;
+	}
+
+	public double getOtherCurrentAssets() {
+		return this.otherCurrentAssets;
 	}
 
 	public void setNetCurrentAssets(double netCurrentAssets) {
@@ -105,37 +204,14 @@ public class BalanceSheet{
 		return this.longNotesReceivable;
 	}
 
-	public void setLand(double land) {
-		this.land=land;
+	public void setPropertyPlantEquipment(double propertyPlantEquipment) {
+		this.propertyPlantEquipment=propertyPlantEquipment;
 	}
 
-	public double getLand() {
-		return this.land;
+	public double getPropertyPlantEquipment() {
+		return this.propertyPlantEquipment;
 	}
 
-	public void setLandImprovements(double landImprovements) {
-		this.landImprovements=landImprovements;
-	}
-
-	public double getLandImprovements() {
-		return this.landImprovements;
-	}
-
-	public void setBuildings(double buildings) {
-		this.buildings=buildings;
-	}
-
-	public double getBuildings() {
-		return this.buildings;
-	}
-
-	public void setEquipment(double equipment) {
-		this.equipment=equipment;
-	}
-
-	public double getEquipment() {
-		return this.equipment;
-	}
 
 	public void setAccumulatedDepreciation(double accumulatedDepreciation){
 		this.accumulatedDepreciation=accumulatedDepreciation;
@@ -153,6 +229,14 @@ public class BalanceSheet{
 		return this.netPropertyPlantEquipment;
 	}
 
+	public void setOtherLongAssets(double otherLongAssets) {
+		this.otherLongAssets=otherLongAssets;
+	}
+
+	public double getOtherLongAssets() {
+		return this.otherLongAssets;
+	}
+
 	public void setNetAssets(double netAssets) {
 		this.netAssets=netAssets;
 	}
@@ -160,23 +244,7 @@ public class BalanceSheet{
 	public double getNetAssets() {
 		return this.netAssets;
 	}
-
-	public void setGoodwill(double goodwill) {
-		this.goodwill=goodwill;
-	}
-
-	public double getGoodwill() {
-		return this.goodwill;
-	}
-
-	public void setNetIntangibleAssets(double netIntangibleAssets) {
-		this.netIntangibleAssets=netIntangibleAssets;
-	}
-
-	public double getNetIntangibleAssets() {
-		return this.netIntangibleAssets;
-	}
-
+	
 	public void setAccountsPayable(double accountsPayable) {
 		this.accountsPayable=accountsPayable;
 	}
@@ -185,36 +253,12 @@ public class BalanceSheet{
 		return this.accountsPayable;
 	}
 
-	public void setShortNotesPayable(double shortNotesPayable) {
-		this.shortNotesPayable=shortNotesPayable;
+	public void setShortTermBorrowings(double shortTermBorrowings) {
+		this.shortTermBorrowings=shortTermBorrowings;
 	}
 
-	public double getShortNotesPayable() {
-		return this.shortNotesPayable;
-	}
-
-	public void setWagesPayable(double wagesPayable) {
-		this.wagesPayable=wagesPayable;
-	}
-
-	public double getWagesPayable() {
-		return this.wagesPayable;
-	}
-
-	public void setInterestPayable(double interestPayable) {
-		this.interestPayable=interestPayable;
-	}
-
-	public double getInterestPayable() {
-		return this.interestPayable;
-	}
-
-	public void setTaxesPayable(double taxesPayable) {
-		this.taxesPayable=taxesPayable;
-	}
-
-	public double getTaxesPayable() {
-		return this.taxesPayable;
+	public double getShortTermBorrowings() {
+		return this.shortTermBorrowings;
 	}
 
 	public void setUnearnedRevenue(double unearnedRevenue) {
@@ -223,6 +267,30 @@ public class BalanceSheet{
 
 	public double getUnearnedRevenue() {
 		return this.unearnedRevenue;
+	} 
+
+	public void setShortPortionOfLongDebt(double shortPortionOfLongDebt) {
+		this.shortPortionOfLongDebt=shortPortionOfLongDebt;
+	}
+
+	public double getShortPortionOfLongDebt() {
+		return this.shortPortionOfLongDebt;
+	}
+	
+	public void setEmployeeRelatedLiabilities(double employeeRelatedLiabilities) {
+		this.employeeRelatedLiabilities=employeeRelatedLiabilities;
+	}
+
+	public double getEmployeeRelatedLiabilities() {
+		return this.employeeRelatedLiabilities;
+	}
+
+	public void setAccruedLiabilities(double accruedLiabilities) {
+		this.accruedLiabilities=accruedLiabilities;
+	}
+
+	public double getAccruedLiabilities() {
+		return this.accruedLiabilities;
 	}
 
 	public void setNetCurrentLiabilities(double netCurrentLiabilities) {
@@ -230,33 +298,25 @@ public class BalanceSheet{
 	}
 
 	public double getNetCurrentLiabilities() {
-		return this.netCurrentLiablities;
+		return this.netCurrentLiabilities;
 	}
 
-	public void setLongNotesPayable(double longNotesPayable) {
-		this.longNotesPayable=longNotesPayable;
+	public void setLongDebt(double longDebt) {
+		this.longDebt=longDebt;
 	}
 
-	public double getLongNotesPayable() {
-		return this.longNotesPayable;
+	public double getLongDebt() {
+		return this.longDebt;
 	}
 
-	public void setBondsPayable(double bondsPayable) {
-		this.bondsPayable=bondsPayable;
+	public void setOtherLongDebt(double otherLongDebt) {
+		this.otherLongDebt=otherLongDebt;
 	}
 
-	public double getBondsPayable() {
-		return this.bondsPayable;
+	public double getOtherLongDebt() {
+		return this.otherLongDebt;
 	}
-
-	public void setNetLongTermLiabilities(double netLongTermLiabilities) {
-		this.netLongTermLiabilities=netLongTermLiabilities;
-	}
-
-	public double getNetLongTermLiabilities() {
-		return this.netLongTermLiabilities;
-	}
-
+	
 	public void setNetLiabilities(double netLiabilities) {
 		this.netLiabilities=netLiabilities;
 	}
@@ -296,6 +356,8 @@ public class BalanceSheet{
 	public double getNetStockHoldersEquity() {
 		return this.netStockHoldersEquity;
 	}
+
+
 
 	
 
