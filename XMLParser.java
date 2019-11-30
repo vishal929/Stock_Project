@@ -1,6 +1,6 @@
 
 //purpose of this java file is to take xml data
-//then take that data and serialize it into a YAML file
+//then take that data and call my YAML logic file
 //purpose of the YAML file is for organization, readability, and flexibility
 //any other language can use the yaml file and I can just send YAML files etc.
 
@@ -20,15 +20,14 @@ import org.yaml.snakeyaml.Yaml;
 public class XMLParser{
 
 	//method to get data from xml and then call the method to parse the data
-	public static void getData (URL xmlFile, int year,String ticker) throws IOException , NoSuchMethodException , IllegalAccessException , InvocationTargetException{
+	public static boolean getData (URL xmlFile, int year,String ticker) throws IOException , NoSuchMethodException , IllegalAccessException , InvocationTargetException{
 		Logger logger = LogManager.getLogger("logger");
 	//	try{
 			logger.info("Starting the process to parse XML file.");
 			BufferedReader xmlLine = new BufferedReader(new InputStreamReader(xmlFile.openStream()));	
-			selectFinancialData(xmlLine,year,ticker);
+			return selectFinancialData(xmlLine,year,ticker);
 
 
-			logger.info("Successfully executed user's request");	
 /*		} catch (Exception e) {
 			logger.fatal("Could not connect to Edgar for parsing xml file! Aborting Process!");	
 			System.out.println("Could not establish connection! Aborting process!");
@@ -39,7 +38,6 @@ public class XMLParser{
 		Logger logger = LogManager.getLogger("logger");
 		logger.info("Filling company financial statements...");
 		//initializing financial statements
-		//INITIALIZATION OF THESE OBJECTS THROWING SOME EXCEPTION!!!!!!!!!!!
 		BalanceSheet balanceSheet = new BalanceSheet();
 		IncomeStatement incomeStatement=new IncomeStatement();
 		CashFlowStatement cashFlowStatement = new CashFlowStatement();
@@ -76,7 +74,7 @@ public class XMLParser{
 		company.setBalanceSheet(balanceSheet);
 		company.setIncomeStatement(incomeStatement);
 		company.setCashFlowStatement(cashFlowStatement);
-		makeYAML(company);	
+		return logicYAML.makeYAML(company);	
 
 	}
 
@@ -162,17 +160,6 @@ public class XMLParser{
 
 
 
-	//method to write object to YAML file
-	public static void makeYAML(CompanyFile filing){
-	Logger logger = LogManager.getLogger("logger");
-	logger.info("serializing data into YAML file...");	
-	String fileName = ""+filing.getTicker()+""+filing.getFilingYear()+".yml";
-
-	Yaml yaml = new Yaml();
-	//testing what the yaml will dump first before making a file
-	System.out.println(yaml.dump(filing));
-	logger.info("successfully dumped data into YAML serialization!");
-	}
 
 
 

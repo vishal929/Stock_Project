@@ -12,8 +12,9 @@
 
 
 //PROJECT STRUCTURE:
+//Driver File: runs the whole project
 //THIS FILE: SERVES PURPOSES OF CONNECTION TO XBRL COMPONENTS AND WILL CHECK IF THAT YEARS DATA HAS BEEN COLLECTED ALREADY (LOOKING THROUGH FILES IN SYSTEM PROJECT FILES)
-//PARSING FILE: WILL PARSE AND COLLECT INFORMATION FROM XML FILE
+//XMLPARSING FILE: WILL PARSE AND COLLECT INFORMATION FROM XML FILE
 //LIBRARY FILE: WILL DO OPERATIONS WITH DATA THAT HAS BEEN COLLECTED FROM THE PARSING FILE
 
 
@@ -39,35 +40,67 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class parseEdgar{
 
-	/*
-	public class Stock{
-		private int year;
-		private 
-	} 
-	*/
-	 
-	public static void main(String[] args) throws IOException , IllegalAccessException , InvocationTargetException , NoSuchMethodException{
-		//the idea is to create a stock object with a bunch of methods and then write and pull the objects via serialization to and from .yaml files and all the processing of information is done in java
-
-		//initializing logger
-		Logger logger = LogManager.getLogger("logger");
 	
-		//asking user for stock ticker;
 
-		Scanner reader = new Scanner(System.in);
+	public static boolean checkDirectory(String ticker,int year) {
+		Logger logger = LogManager.getLogger("logger");
+		//there will be directories of tickers in the directory "companyFilings"
+		//first step is to check if companyFilings directory exists, and if not, then one will be created and the user will be told that data is not available and prompt user for data gathering
+		logger.info("Checking saved company filings for the requested ticker and year...");
+		String filingsDirectory = "/companyFilings/";
+		File filings = new File(filingsDirectory);
 
-		System.out.println("Please enter the ticker!");
+		//checking if companyFilings directory exists
+		if (!filings.exists()) {
+			//then we need to create the file "companyFilings"
+			logger.error("Company File directory not found. Will create the directory and continue...");
+			if (filings.createNewFile()){
+				//will continue to gather data
+				logger.info("successfully created company filings directory! Will continue to gather data...");
+			} else {
+				//then for some reason we could not create the new file
+				logger.fatal("Not able to create company file directory! Maybe there is not enough space! Aborting process!");
+				return false;
+
+			}
+
+		} 
+			//Now we need to check if the company's ticker file exists
+			String tickerDirectory=filingsDirectory+"/"+ticker+"/";
+			File tickerFilings = new File(tickerDirectory);
+			if (!tickerFilings.exists()) {
+				//then the ticker directory doesnt exist
+				//we will continue to gather data
+				logger.error("Filing directory not found. Will create directory and proceed....");
+				if(tickerFilings.createNewFile()){
+					//then file was successfully created and we can proceed
+					logger.info("Successfully created ticker directory within company filings directory. Will proceed with gathering data...");
+					return true;
+				} else {
+					logger.fatal("Was not able to create ticker directory. Will abort the process!");
+					return false;
+				}
+			} else {
+				//then the ticker directory does exist and we can check if the data for the requested year is saved
+				//we can search for the file with relative path
+				File searched = new File(tickerDirectory+"/"+ticker+""+year+".yml");
+				if (searched.exists()){
+					//FILE ALREADY EXISTS NO NEED TO CONTINUE PROCESS
+					logger.info("Filing found! No need to gather data.");
+					return false;
+
+				} else {
+					//then the file does not exist and we can continue to gather data
+					logger.error("Filing data not found. Prompting user for further input...");
+					return true;
+
+				}
 
 
-		String ticker = reader.nextLine().toUpperCase();
-
-		System.out.println("Please enter the year the report was filed (i.e 2016 for the 2015 annual report)");
-		int year = reader.nextInt();
-
-		download(ticker,year);
-
-
+			}
 		
+		
+
 	}
 
 	//function to make sure user's ticker is valid--> removing punctuation and whiteSpace
@@ -92,20 +125,20 @@ public class parseEdgar{
 	}
 
 	//this method will download company data if not already present on the system
-	public static void download(String ticker, int year) throws IOException , IllegalAccessException , NoSuchMethodException , InvocationTargetException{
+	public static boolean download(String ticker, int year) throws IOException , IllegalAccessException , NoSuchMethodException , InvocationTargetException{
 		Logger logger = LogManager.getLogger("logger");
 		ticker=makeValid(ticker);
 		if (ticker.equals("")) {
 			logger.fatal("User provided a ticker that led to an empty value of ticker! The process will now abort.");
 			System.out.println("User provided a ticker that led to an empty value of ticker! The process will now abort.");
-			return;
+			return false;
 
 		}
 		
 		if (!xmlValidYear(year)) {
 			logger.error("Year that user has inputted is invalid! Aborting process!");
 			System.out.println("Year is invalid! Stopping process!");
-			return;
+			return false;
 		}
 		
 
@@ -134,7 +167,7 @@ public class parseEdgar{
 			if (desired.get(0).text().equals("No matching Ticker Symbol.")) {
 				logger.error("Ticker does not exist. Aborting Process.");
 				System.out.println("The ticker does not exist! Aborting Process");
-				return;
+				return false;
 			} else {
 				//now we have a valid ticker, so we need to pull data from the latest 10-k filing
 				//So, we need to fill the filing type textfield in the html form and then submit it in a POST request to the server to get the search results back
@@ -171,7 +204,7 @@ public class parseEdgar{
 					//then we only have the header and no 10-k exists
 					System.out.println("NO FILING");
 					logger.info("No 10-K filing exists yet for this ticker.Stopping the process.");
-					return;
+					return false;
 				} else {
 					//then the 10-k filings are nonempty
 										
@@ -183,21 +216,25 @@ public class parseEdgar{
 							filingYear+=""+date.charAt(j);
 						}
 						int yearToCompare=Integer.parseInt(filingYear);
-						System.out.println(yearToCompare);
 						if (year==yearToCompare) {
 							//then we found the filing we want
 							Element link = rows.get(i).getElementById("documentsbutton");
 							String toConnect="https://sec.gov"+link.attr("href");
-							System.out.println(toConnect);
 							logger.info("Accessing filings at "+toConnect);
-							parseData(toConnect,year,ticker);
-							return;
+							if (checkDirectory(ticker,year)){
+
+								return parseData(toConnect,year,ticker);
+							} else {
+								logger.fatal("Something went wrong with checking directories. Will abort now!");
+								return false;
+							}
+							
 
 
 						} else if (year>yearToCompare) {
 							//then there is no filing yet for the year we want
 							logger.info("Annual statement for requested year does not exitst yet! Aborting process!");
-							return;
+							return false;
 
 						}
 
@@ -205,7 +242,8 @@ public class parseEdgar{
 					
 					
 				}
-
+				//for compilation
+				return true;
 			}
 
 
@@ -220,7 +258,7 @@ public class parseEdgar{
 	}
 
 
-	public static void parseData(String link,int year,String ticker) throws IOException , IllegalAccessException , InvocationTargetException , NoSuchMethodException{
+	public static boolean parseData(String link,int year,String ticker) throws IOException , IllegalAccessException , InvocationTargetException , NoSuchMethodException{
 		Logger logger = LogManager.getLogger("logger");
 		//BIG IDEA:
 		//make hashtables for each financial document with expected data
@@ -241,6 +279,7 @@ public class parseEdgar{
 				System.out.println("No XBLR filing exists! Maybe the filing is before 2009. Process will abort!");
 				logger.info("No XBLR filing could be found! Maybe the filing was filed before 2009. Process will abort!");
 				logger.info("Ended process to connect to XML file.");
+				return false;
 			} else {
 				//then there is an xml filing that we will need to parse
 				//I will call this from my financial XBLR parser Library
@@ -252,7 +291,7 @@ public class parseEdgar{
 				logger.info("Accessing xml file at "+toParse);
 				//need to parse data in this URL using xml parse method
 				//will pass year and ticker until they get recorded in YAML file
-				XMLParser.getData(toParse,year,ticker);
+				return XMLParser.getData(toParse,year,ticker);
 
 			}
 /*		} catch (Exception e) {
