@@ -14,6 +14,7 @@ public class BalanceSheet{
 	private double accountsReceivable;
 	private double shortNotesReceivable;
 	private double cash;
+	private double marketableSecurities;
 	private double inventoryNet;
 	private double inventoryFinished;
 	private double inventoryWorkInProcess;
@@ -57,6 +58,7 @@ public class BalanceSheet{
 		//everything starts out null, but on initialization of the object, we initialize the HashMap
 		//putting description for current assets
 		this.description= new HashMap<String,Method>();	
+		description.put("AvailableForSaleSecuritiesDebtSecuritiesCurrent",BalanceSheet.class.getMethod("setMarketableSecurities",double.class));
 		description.put("AccountsReceivableNetCurrent",BalanceSheet.class.getMethod("setAccountsReceivable",double.class));
 		description.put("NotesAndLoansReceivableNetCurrent",BalanceSheet.class.getMethod("setShortNotesReceivable",double.class));
 		description.put("CashAndCashEquivalentsAtCarryingValue",BalanceSheet.class.getMethod("setCash",double.class));
@@ -131,6 +133,14 @@ public class BalanceSheet{
 
 
 	//getter and setter methods for each private entry:
+	
+	public void setMarketableSecurities(double marketableSecurities){
+		this.marketableSecurities=marketableSecurities;
+	}
+
+	public double returnMarketableSecurities(){
+		return this.marketableSecurities;
+	}
 	
 	public void setAccountsReceivable(double accountsReceivable) {
 		this.accountsReceivable=accountsReceivable;
