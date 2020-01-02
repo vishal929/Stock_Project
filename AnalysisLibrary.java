@@ -17,7 +17,7 @@ public class AnalysisLibrary{
 
 
 
-	public static double getQuickRatio(companyFile filing){
+	public static double getQuickRatio(CompanyFile filing){
 		//method to get quick ratio from some filing
 		BalanceSheet balanceSheet = filing.getBalanceSheet();
 		double cash = balanceSheet.getCash();
@@ -30,6 +30,38 @@ public class AnalysisLibrary{
 		return quickRatio;
 
 	}
+
+
+	public static double getWorkingCapitalRatio(CompanyFile filing){
+		//method to get working capital ratio from some filing
+		BalanceSheet balanceSheet = filing.getBalanceSheet();
+		double currentAssets =balanceSheet.getNetCurrentAssets(); 
+		double currentLiabilities= balanceSheet.getNetCurrentLiabilities();
+
+		double workingCapitalRatio = (currentAssets/currentLiabilities);
+		
+		return workingCapitalRatio;
+	}
+
+	public static double getDebtEquityRatio(CompanyFile filing){
+		//method to get debtequity ratio
+		//totaldebt/book value=debt equity ratio
+		BalanceSheet balanceSheet = filing.getBalanceSheet();
+		double totalDebt=balanceSheet.getShortPortionOfLongDebt() + balanceSheet.getLongDebt() + balanceSheet.getOtherLongDebt();
+		double bookValue=balanceSheet.getNetAssets()-balanceSheet.getNetLiabilities();
+		return totalDebt/bookValue;
+	}
+
+
+	public static double getEarningsPerShare(CompanyFile filing){
+		//method to get earnings per share
+		//net income/ number of common stock shares outstanding
+		IncomeStatement is = filing.getIncomeStatement();
+		return is.getNetIncomePerShare();
+	}
+
+
+
 
 
 

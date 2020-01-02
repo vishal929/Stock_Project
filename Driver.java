@@ -6,6 +6,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Scanner;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.IllegalAccessException;
+import java.lang.reflect.InvocationTargetException;
+
 
 //this is a class to basically run the app
 //TO IMPLEMENT: IF USER DOES NOT SPECIFY A YEAR TO GATHER DATA, THEN I WILL GATHER ALL DATA IN XML FORMAT
@@ -13,13 +18,13 @@ import java.util.Scanner;
 
 public class Driver{
 
-public static void main(String[] args){
+public static void main(String[] args) throws IOException,IllegalAccessException,NoSuchMethodException,InvocationTargetException{
 	Logger logger = LogManager.getLogger("logger");
 	Scanner reader = new Scanner(System.in);
 
 	logger.info("Initializing the project and welcoming the user");
 
-	System.out.println("Hello! Welcome to my Stock Project!);
+	System.out.println("Hello! Welcome to my Stock Project!");
 
 	while(true){
 		System.out.println("Please select an option below:");
@@ -31,7 +36,8 @@ public static void main(String[] args){
 			//then the user wants to collect stock data
 			System.out.println("Please enter the ticker and then enter the year!");
 			String ticker = reader.nextLine().trim().toUpperCase();
-			String year = reader.nextLine().trim();
+			String yearInput = reader.nextLine().trim();
+			int year = Integer.parseInt(yearInput);	
 			logger.info("Initializing process to get stock data, if it does not already exist.");
 			boolean[] exists = new boolean[1];
 			if (stockData(ticker,year,exists)){
@@ -69,7 +75,7 @@ public static void main(String[] args){
 }
 
 
-	public static boolean stockData(String ticker, int year, boolean[] exists){
+	public static boolean stockData(String ticker, int year, boolean[] exists) throws IOException,IllegalAccessException,NoSuchMethodException,InvocationTargetException{
 		//this will just run the parseEdgar getstockdata function
 		return parseEdgar.download(ticker,year,exists);
 	}
@@ -83,11 +89,12 @@ public static void main(String[] args){
 		logger.info("User has requested an analysis of the ticker: "+ticker);
 		System.out.println("Please enter the year of filing you wish to calculate the quick ratio for!");
 		String year = reader.nextLine().trim();
-		String potentialFile ="/companyFilings/"+ticker+year+".yml"; 
+		String potentialFile ="companyFilings/"+ticker+"/"+ticker+year+".yml"; 
 		logger.info("User wants an analysis for the year: "+year);
 		File yamlFile = new File(potentialFile);
+		System.out.println("Absolute Path:"+yamlFile.getAbsolutePath());
 		if (yamlFile.exists()){
-			CompanyFiling statement = logicYAML.load(yamlFile);
+			CompanyFile statement = logicYAML.load(yamlFile);
 			System.out.println("Quick ratio: "+ AnalysisLibrary.getQuickRatio(statement));
 			logger.info("Successfully retrieved analysis for the user!");
 		} else {

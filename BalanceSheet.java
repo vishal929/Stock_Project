@@ -138,7 +138,7 @@ public class BalanceSheet{
 		this.marketableSecurities=marketableSecurities;
 	}
 
-	public double returnMarketableSecurities(){
+	public double getMarketableSecurities(){
 		return this.marketableSecurities;
 	}
 	

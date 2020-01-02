@@ -34,7 +34,7 @@ public class XMLParser{
 		} */
 	}
 
-	public static void selectFinancialData(BufferedReader xmlReader, int year,String ticker) throws NoSuchMethodException , IllegalAccessException, IOException, InvocationTargetException{
+	public static boolean selectFinancialData(BufferedReader xmlReader, int year,String ticker) throws NoSuchMethodException , IllegalAccessException, IOException, InvocationTargetException{
 		Logger logger = LogManager.getLogger("logger");
 		logger.info("Filling company financial statements...");
 		//initializing financial statements

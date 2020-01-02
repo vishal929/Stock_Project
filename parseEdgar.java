@@ -42,62 +42,67 @@ public class parseEdgar{
 
 	
 
-	public static boolean checkDirectory(String ticker,int year) {
+	public static boolean checkDirectory(String ticker,int year,boolean[] exists) {
 		Logger logger = LogManager.getLogger("logger");
 		//there will be directories of tickers in the directory "companyFilings"
 		//first step is to check if companyFilings directory exists, and if not, then one will be created and the user will be told that data is not available and prompt user for data gathering
 		logger.info("Checking saved company filings for the requested ticker and year...");
-		String filingsDirectory = "/companyFilings/";
+		
+
+		String filingsDirectory = "./companyFilings";
 		File filings = new File(filingsDirectory);
+		System.out.println(filings.getAbsolutePath());
 
-		//checking if companyFilings directory exists
-		if (!filings.exists()) {
-			//then we need to create the file "companyFilings"
-			logger.error("Company File directory not found. Will create the directory and continue...");
-			if (filings.createNewFile()){
-				//will continue to gather data
-				logger.info("successfully created company filings directory! Will continue to gather data...");
+		try{
+			if (filings.mkdirs()){
+				//then the filing didnt exist
+				logger.info("successfully created company filings directory at "+ filings.getAbsolutePath()+"! Will continue to gather data...");
 			} else {
-				//then for some reason we could not create the new file
-				logger.fatal("Not able to create company file directory! Maybe there is not enough space! Aborting process!");
+				//then the filing already exists
+				logger.info("found the company filings directory at" +filings.getAbsolutePath()+"! Will continue to gather data...");
+			}
+		} catch(Exception e){
+			logger.fatal("was not able to find or create company filings directory at "+ filings.getAbsolutePath()+"! Process will now abort!");
+			return false;
+		}
+
+		//Now we need to check if the company's ticker file exists
+		String tickerDirectory=filingsDirectory+"/"+ticker;
+		File tickerFilings = new File(tickerDirectory);
+
+		try{
+			if (tickerFilings.mkdirs()){
+				//then the ticker dir did not exist
+				logger.info("Created a ticker directory at" + tickerFilings.getAbsolutePath()+" ! Will proceed with gathering data...");
+
+			} else {
+				//then the ticker dir exists
+				logger.info("Found the ticker directory at" + tickerFilings.getAbsolutePath()+ " Will proceed with gathering data...");
+			}
+		} catch(Exception e){
+				logger.fatal("Not able to find or create the ticker directory at" +tickerFilings.getAbsolutePath()+ " Process will abort!");
 				return false;
+		}
 
-			}
+		
+		//then the ticker directory does exist and we can check if the data for the requested year is saved
+		//we can search for the file with relative path
+		File searched = new File(tickerDirectory+"/"+ticker+""+year+".yml");
+		if (searched.exists()){
+			//FILE ALREADY EXISTS NO NEED TO CONTINUE PROCESS
+			logger.info("Filing found at " + searched.getAbsolutePath()+ "! No need to gather data.");
+			exists[0]=true;
+			return false;
 
-		} 
-			//Now we need to check if the company's ticker file exists
-			String tickerDirectory=filingsDirectory+"/"+ticker+"/";
-			File tickerFilings = new File(tickerDirectory);
-			if (!tickerFilings.exists()) {
-				//then the ticker directory doesnt exist
-				//we will continue to gather data
-				logger.error("Filing directory not found. Will create directory and proceed....");
-				if(tickerFilings.createNewFile()){
-					//then file was successfully created and we can proceed
-					logger.info("Successfully created ticker directory within company filings directory. Will proceed with gathering data...");
-					return true;
-				} else {
-					logger.fatal("Was not able to create ticker directory. Will abort the process!");
-					return false;
-				}
-			} else {
-				//then the ticker directory does exist and we can check if the data for the requested year is saved
-				//we can search for the file with relative path
-				File searched = new File(tickerDirectory+"/"+ticker+""+year+".yml");
-				if (searched.exists()){
-					//FILE ALREADY EXISTS NO NEED TO CONTINUE PROCESS
-					logger.info("Filing found! No need to gather data.");
-					return false;
+		} else {
+			//then the file does not exist and we can continue to gather data
+			logger.error("Filing data not found. Prompting user for further input...");
+			return true;
 
-				} else {
-					//then the file does not exist and we can continue to gather data
-					logger.error("Filing data not found. Prompting user for further input...");
-					return true;
-
-				}
+		}
 
 
-			}
+			
 		
 		
 
@@ -125,7 +130,7 @@ public class parseEdgar{
 	}
 
 	//this method will download company data if not already present on the system
-	public static boolean download(String ticker, int year) throws IOException , IllegalAccessException , NoSuchMethodException , InvocationTargetException{
+	public static boolean download(String ticker, int year,boolean[] exists) throws IOException , IllegalAccessException , NoSuchMethodException , InvocationTargetException{
 		Logger logger = LogManager.getLogger("logger");
 		ticker=makeValid(ticker);
 		if (ticker.equals("")) {
@@ -221,7 +226,7 @@ public class parseEdgar{
 							Element link = rows.get(i).getElementById("documentsbutton");
 							String toConnect="https://sec.gov"+link.attr("href");
 							logger.info("Accessing filings at "+toConnect);
-							if (checkDirectory(ticker,year)){
+							if (checkDirectory(ticker,year,exists)){
 
 								return parseData(toConnect,year,ticker);
 							} else {

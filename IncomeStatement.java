@@ -21,6 +21,10 @@ public class IncomeStatement{
 	private double incomeTax;
 	private double interestExpense;
 	private double netIncome;
+	private double commonSharesOutstanding;
+	private double netIncomePerShare;
+
+	
 
 	//hashmap of operations
 	private HashMap<String,Method> description;
@@ -43,6 +47,11 @@ public class IncomeStatement{
 		description.put("IncomeTaxExpenseBenefit",IncomeStatement.class.getMethod("setIncomeTax",double.class));
 		description.put("InterestExpense",IncomeStatement.class.getMethod("setInterestExpense",double.class));
 		description.put("NetIncomeLoss",IncomeStatement.class.getMethod("setNetIncome",double.class));
+		
+		description.put("WeightedAverageNumberOfSharesOutstandingBasic",IncomeStatement.class.getMethod("setCommonSharesOutstanding",double.class));
+
+		description.put("EarningsPerShareBasic",IncomeStatement.class.getMethod("setNetIncomePerShare",double.class));
+
 
 
 
@@ -162,7 +171,21 @@ public class IncomeStatement{
 		return this.netIncome;
 	}
 	
+	public double getCommonSharesOutstanding(){
+		return commonSharesOutstanding;
+	}	
 
+	public void setCommonSharesOutstanding(double commonShares){
+		commonSharesOutstanding=commonShares;
+	}
+
+	public double getNetIncomePerShare(){
+		return netIncomePerShare;
+	}
+
+	public void setNetIncomePerShare(double eps){
+		netIncomePerShare=eps;
+	}
 
 
 

@@ -19,6 +19,15 @@ public class CompanyFile{
 	}
 
 	//getter and setter methods
+	//
+	
+	public void setFilingYear(int year){
+		filingYear=year;
+	}
+
+	public int getFilingYear(){
+		return filingYear;
+	}
 	
 	public void setTicker(String ticker) {
 		this.ticker=ticker;
@@ -28,13 +37,7 @@ public class CompanyFile{
 		return this.ticker;
 	}
 
-	public void setFilingYear(int filingYear) {
-		this.filingYear=filingYear;
-	}
-
-	public int getFilingYear() {
-		return this.filingYear;
-	}
+	
 
 	public void setBalanceSheet(BalanceSheet balanceSheet) {
 		this.balanceSheet=balanceSheet;
