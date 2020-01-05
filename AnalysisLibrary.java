@@ -13,6 +13,8 @@
 
 //i will give option for user to get individual statistics and provide a general statistics file that will calculate the statistics for every year and compile them in a file
 
+
+
 public class AnalysisLibrary{
 
 
@@ -20,12 +22,15 @@ public class AnalysisLibrary{
 	public static double getQuickRatio(CompanyFile filing){
 		//method to get quick ratio from some filing
 		BalanceSheet balanceSheet = filing.getBalanceSheet();
-		double cash = balanceSheet.getCash();
-		double accountsReceivable = balanceSheet.getAccountsReceivable();
-		double marketableSecurities = balanceSheet.getMarketableSecurities();
-		double currentLiabilities = balanceSheet.getNetCurrentLiabilities();
+		long cash = balanceSheet.getCash();
+		long accountsReceivable = balanceSheet.getAccountsReceivable();
+		long marketableSecurities = balanceSheet.getMarketableSecurities();
+		long currentLiabilities = balanceSheet.getNetCurrentLiabilities();
+		long shortNote = balanceSheet.getShortNotesReceivable();
+		System.out.println("The sum of AR+MS+Cash+SNote is:"+(cash+accountsReceivable+marketableSecurities+shortNote));
+		System.out.println("Current liabilities is:"+currentLiabilities);
 
-		double quickRatio=(cash+accountsReceivable+marketableSecurities)/currentLiabilities;
+		double quickRatio=(cash+accountsReceivable+marketableSecurities+shortNote)/ (double) currentLiabilities;
 
 		return quickRatio;
 
@@ -35,10 +40,10 @@ public class AnalysisLibrary{
 	public static double getWorkingCapitalRatio(CompanyFile filing){
 		//method to get working capital ratio from some filing
 		BalanceSheet balanceSheet = filing.getBalanceSheet();
-		double currentAssets =balanceSheet.getNetCurrentAssets(); 
-		double currentLiabilities= balanceSheet.getNetCurrentLiabilities();
+		long currentAssets =balanceSheet.getNetCurrentAssets(); 
+		long currentLiabilities= balanceSheet.getNetCurrentLiabilities();
 
-		double workingCapitalRatio = (currentAssets/currentLiabilities);
+		double workingCapitalRatio = (currentAssets/ (double) currentLiabilities);
 		
 		return workingCapitalRatio;
 	}
@@ -47,9 +52,9 @@ public class AnalysisLibrary{
 		//method to get debtequity ratio
 		//totaldebt/book value=debt equity ratio
 		BalanceSheet balanceSheet = filing.getBalanceSheet();
-		double totalDebt=balanceSheet.getShortPortionOfLongDebt() + balanceSheet.getLongDebt() + balanceSheet.getOtherLongDebt();
-		double bookValue=balanceSheet.getNetAssets()-balanceSheet.getNetLiabilities();
-		return totalDebt/bookValue;
+		long totalDebt=balanceSheet.getShortPortionOfLongDebt() + balanceSheet.getLongDebt() + balanceSheet.getOtherLongDebt();
+		long bookValue=balanceSheet.getNetAssets()-balanceSheet.getNetLiabilities();
+		return  (double) totalDebt/bookValue;
 	}
 
 
@@ -57,7 +62,9 @@ public class AnalysisLibrary{
 		//method to get earnings per share
 		//net income/ number of common stock shares outstanding
 		IncomeStatement is = filing.getIncomeStatement();
-		return is.getNetIncomePerShare();
+		long netEarnings=is.getNetIncome();
+		long weightedCommon =is.getCommonSharesOutstanding();
+		return (double) netEarnings/weightedCommon;
 	}
 
 

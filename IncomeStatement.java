@@ -6,23 +6,26 @@ import java.util.HashMap;
 
 
 
+
 public class IncomeStatement{
 
 
-	private double netSales;
-	private double costOfSales;
-	private double grossProfit;
-	private double RAndDExpense;
-	private double SGAndAExpense;
-	private double otherIncomeExpense;
-	private double additionalExpense;
-	private double EBIT;
-	private double EBT;
-	private double incomeTax;
-	private double interestExpense;
-	private double netIncome;
-	private double commonSharesOutstanding;
-	private double netIncomePerShare;
+	private long netSales;
+	private long costOfSales;
+	private long grossProfit;
+	private long RAndDExpense;
+	private long SGAndAExpense;
+	private long EBT;
+	private long interestExpense;
+	private long netIncome;
+	private long commonSharesOutstanding;
+
+
+	private long provisionForIncomeTax;
+	private long incomeFromDiscontinuedOperations; 
+
+	
+
 
 	
 
@@ -34,23 +37,37 @@ public class IncomeStatement{
 		this.description=new HashMap<String,Method>();
 
 		//filling HashMap with String,Method pairs
-		description.put("Revenues",IncomeStatement.class.getMethod("setNetSales",double.class));
-		description.put("CostOfRevenue",IncomeStatement.class.getMethod("setCostOfSales",double.class));
-		description.put("GrossProfit",IncomeStatement.class.getMethod("setGrossProfit",double.class));
-		description.put("ResearchAndDevelopmentExpense",IncomeStatement.class.getMethod("setRAndDExpense",double.class));
-		description.put("SellingGeneralAndAdministrativeExpense",IncomeStatement.class.getMethod("setSGAndAExpense",double.class));
-		//FIGURE OUT other income/EXPENSE/OPERATING iNCOME
-		description.put("OtherIncomeAndExpense",IncomeStatement.class.getMethod("setOtherIncomeExpense",double.class));
+		description.put("Revenues",IncomeStatement.class.getMethod("setNetSales",long.class));
+		description.put("CostOfRevenue",IncomeStatement.class.getMethod("setCostOfSales",long.class));
+		description.put("GrossProfit",IncomeStatement.class.getMethod("setGrossProfit",long.class));
+		description.put("ResearchAndDevelopmentExpense",IncomeStatement.class.getMethod("setRAndDExpense",long.class));
+		description.put("SellingGeneralAndAdministrativeExpense",IncomeStatement.class.getMethod("setSGAndAExpense",long.class));
 		//look at note above
 		//FIGURE THIS sTuFF OUT TOO
-		description.put("IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",IncomeStatement.class.getMethod("setEBT",double.class));
-		description.put("IncomeTaxExpenseBenefit",IncomeStatement.class.getMethod("setIncomeTax",double.class));
-		description.put("InterestExpense",IncomeStatement.class.getMethod("setInterestExpense",double.class));
-		description.put("NetIncomeLoss",IncomeStatement.class.getMethod("setNetIncome",double.class));
-		
-		description.put("WeightedAverageNumberOfSharesOutstandingBasic",IncomeStatement.class.getMethod("setCommonSharesOutstanding",double.class));
+		description.put("IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",IncomeStatement.class.getMethod("setEBT",long.class));
+		description.put("IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments",IncomeStatement.class.getMethod("setEBT",long.class));
 
-		description.put("EarningsPerShareBasic",IncomeStatement.class.getMethod("setNetIncomePerShare",double.class));
+		description.put("InterestExpense",IncomeStatement.class.getMethod("setInterestExpense",long.class));
+		description.put("ProfitLoss",IncomeStatement.class.getMethod("setNetIncome",long.class));
+		
+		description.put("WeightedAverageNumberOfSharesOutstandingBasic",IncomeStatement.class.getMethod("setCommonSharesOutstanding",long.class));
+
+		description.put("IncomeTaxExpenseBenefit",IncomeStatement.class.getMethod("setProvisionForIncomeTax",long.class));			
+		description.put("IncomeLossFromDiscontinuedOperationsNetOfTaxAttributableToReportingEntity",IncomeStatement.class.getMethod("setIncomeFromDiscontinuedOperations",long.class));			
+		description.put("IncomeLossFromDiscontinuedOperationsNetOfTax",IncomeStatement.class.getMethod("setIncomeFromDiscontinuedOperations",long.class));			
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -69,7 +86,7 @@ public class IncomeStatement{
 				String date=XMLParser.getDate(line);
 				if (XMLParser.sameYear(date,year)){
 					//then year matches what the user needs so we can store the data
-					double data = XMLParser.getData(line);
+					long data = XMLParser.getData(line);
 					Method toDo=this.description.get(context);
 					toDo.invoke(this,data);
 					//removing context from hashmap so the value cannot be changed
@@ -82,109 +99,101 @@ public class IncomeStatement{
 
 	//getter setter methods 
 	
-	public void setNetSales(double netSales) {
+	public void setNetSales(long netSales) {
 		this.netSales=netSales;
 	}
 
-	public double getNetSales() {
+	public long getNetSales() {
 		return this.netSales;
 	}
 
-	public void setCostOfSales(double costOfSales) {
+	public void setCostOfSales(long costOfSales) {
 		this.costOfSales=costOfSales;
 	}
 
-	public double getCostOfSales() {
+	public long getCostOfSales() {
 		return this.costOfSales;
 	}
 
-	public void setGrossProfit(double grossProfit) {
+	public void setGrossProfit(long grossProfit) {
 		this.grossProfit=grossProfit;
 	}
 
-	public double getGrossProfit() {
+	public long getGrossProfit() {
 		return this.grossProfit;
 	}
 
-	public void setRAndDExpense(double RAndDExpense) {
+	public void setRAndDExpense(long RAndDExpense) {
 		this.RAndDExpense=RAndDExpense;
 	}
 
-	public double getRAndDExpense() {
+	public long getRAndDExpense() {
 		return this.RAndDExpense;
 	}
 
-	public void setSGAndAExpense(double SGAndAExpense) {
+	public void setSGAndAExpense(long SGAndAExpense) {
 		this.SGAndAExpense=SGAndAExpense;
 	}
 
-	public double getSGAndAExpense() {
+	public long getSGAndAExpense() {
 		return this.SGAndAExpense;
 	}
 	
-	public void setOtherIncomeExpense(double otherIncomeExpense) {
-		this.otherIncomeExpense=otherIncomeExpense;
-	}
-
-	public double getOtherIncomeExpense() {
-		return this.otherIncomeExpense;
-	}
 
 
-	public void setEBIT(double EBIT) {
-		this.EBIT=EBIT;
-	}
 
-	public double getEBIT() {
-		return this.EBIT;
-	}
 
-	public void setEBT(double EBT) {
+	public void setEBT(long EBT) {
 		this.EBT=EBT;
 	}
 
-	public double getEBT() {
+	public long getEBT() {
 		return this.EBT;
 	}
 
-	public void setInterestExpense(double interestExpense) {
+	public void setInterestExpense(long interestExpense) {
 		this.interestExpense=interestExpense;
 	}
 
-	public double getInterestExpense(){
+	public long getInterestExpense(){
 		return this.interestExpense;
 	}
 
-	public void setIncomeTax(double incomeTax) {
-		this.incomeTax=incomeTax;
-	}
 
-	public double getIncomeTax() {
-		return this.incomeTax;
-	}
 
-	public void setNetIncome(double netIncome) {
+	public void setNetIncome(long netIncome) {
 		this.netIncome=netIncome;
 	}
 
-	public double getNetIncome() {
+	public long getNetIncome() {
 		return this.netIncome;
 	}
 	
-	public double getCommonSharesOutstanding(){
+	public long getCommonSharesOutstanding(){
 		return commonSharesOutstanding;
 	}	
 
-	public void setCommonSharesOutstanding(double commonShares){
+	public void setCommonSharesOutstanding(long commonShares){
 		commonSharesOutstanding=commonShares;
 	}
 
-	public double getNetIncomePerShare(){
-		return netIncomePerShare;
+	
+
+
+	public void setProvisionForIncomeTax(long provisionForIncomeTax){
+		this.provisionForIncomeTax=provisionForIncomeTax;
 	}
 
-	public void setNetIncomePerShare(double eps){
-		netIncomePerShare=eps;
+	public long getProvisionForIncomeTax(){
+		return this.provisionForIncomeTax;
+	}
+
+	public void setIncomeFromDiscontinuedOperations(long incomeFromDiscontinuedOperations){
+		this.incomeFromDiscontinuedOperations=incomeFromDiscontinuedOperations;
+	}
+
+	public long getIncomeFromDiscontinuedOperations(){
+		return this.incomeFromDiscontinuedOperations;
 	}
 
 

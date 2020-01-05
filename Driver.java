@@ -80,7 +80,7 @@ public static void main(String[] args) throws IOException,IllegalAccessException
 		return parseEdgar.download(ticker,year,exists);
 	}
 
-	public static void analysis(String ticker){
+	public static void analysis(String ticker) throws IOException{
 		//will make use of library functions
 		//first we will load the companyFile for the year requested
 		Logger logger = LogManager.getLogger("logger");

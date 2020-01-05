@@ -4,6 +4,8 @@ import java.io.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.Constructor;
+
 
 
 
@@ -53,13 +55,19 @@ public class logicYAML{
 	}
 	
 	//method to load the yamlFile to construct the CompanyFile object basically
-	public static CompanyFile load(File yamlFile){
-
-		Yaml yaml = new Yaml(getConstructor(CompanyFile.class));
+	public static CompanyFile load(File yamlFile) throws IOException{
+		/*
+		Constructor constructor = new Constructor(logicYAML.class);
+		TypeDescription  companyFile = new TypeDescription(CompanyFile.class);
+		companyFile.substituteProperty("BalanceSheet",List.class, "getValuesForBalanceSheet", "setValuesForBalanceSheet");
+		companyFile.substituteProperty("IncomeStatement",List.class, "getValuesForIncomeStatement", "setValuesForIncomeStatement");
+		companyFile.substituteProperty("CashFlowStatement",List.class, "getValuesForCashFlowStatement", "setValuesForCashFlowStatement");
+		*/
+		Yaml yaml = new Yaml();
 		//loading the CompanyFile object from a yamlFile to "read" the yaml data
-
+		Reader reader = new FileReader(yamlFile.getAbsolutePath());
 		InputStream in = CompanyFile.class.getClassLoader().getResourceAsStream(yamlFile.getAbsolutePath());
-		CompanyFile filing = yaml.load(in);
+		CompanyFile filing = yaml.loadAs(reader,CompanyFile.class);
 
 		return filing;
 	}

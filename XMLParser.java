@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.yaml.snakeyaml.Yaml;
 
 
+
 public class XMLParser{
 
 	//method to get data from xml and then call the method to parse the data
@@ -65,6 +66,7 @@ public class XMLParser{
 			}
 
 		}
+		xmlReader.close();
 		logger.info("successfully filled financial statements!");
 
 		//creating companyfile object which will be the final comprehensive filing object which we will dump to YAML
@@ -113,7 +115,7 @@ public class XMLParser{
 	}
 
 	//helper function to extract the data (financial information) out of the line
-	public static double getData(String line) {
+	public static long getData(String line) {
 		String num = "";
 		for (int i=11;i<line.length();i++) {
 			if (line.charAt(i)=='>') {
@@ -127,9 +129,10 @@ public class XMLParser{
 				break;
 			}
 		}
+		//representing the number in Millions
 		try{
 
-			double toReturn=Double.parseDouble(num);
+			long toReturn=Long.parseLong(num);
 			return toReturn;
 		} catch (Exception e) {
 			//catching numberformat exception

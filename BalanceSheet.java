@@ -6,49 +6,68 @@ import java.util.HashMap;
 
 
 
+
 //balance sheet object that stock data object has
 
 public class BalanceSheet{
 	
 	//listing out current assets 
-	private double accountsReceivable;
-	private double shortNotesReceivable;
-	private double cash;
-	private double marketableSecurities;
-	private double inventoryNet;
-	private double inventoryFinished;
-	private double inventoryWorkInProcess;
-	private double otherCurrentAssets;
-	private double netCurrentAssets;
+	private long accountsReceivable;
+	private long shortNotesReceivable;
+	private long cash;
+	private long marketableSecurities;
+	private long inventoryNet;
+	private long inventoryFinished;
+	private long inventoryWorkInProcess;
+	private long otherCurrentAssetsAndPrepaidExpenses;
+	private long netCurrentAssets;
+	private long deferredCurrentTaxes;
 
 	//listing out long term assets (PPE)
-	private double longNotesReceivable;
-	private double propertyPlantEquipment;
-	private double accumulatedDepreciation;
-	private double netPropertyPlantEquipment; 
-	private double otherLongAssets;
-	private double netAssets;
+	private long longNotesReceivable;
+	private long propertyPlantEquipment;
+	private long accumulatedDepreciation;
+	private long netPropertyPlantEquipment; 
+	private long netAssets;
+	private long deferredLongTaxes;
 
+	private long prepaidPension;
+	private long deferredTaxes;
+	private long goodwill;
+	private long intangibleAssets;
+	private long longInvestments;
+
+	
 	//listing out current liabilities
-	private double accountsPayable;
-	private double shortTermBorrowings;
-	private double shortPortionOfLongDebt;
-	private double unearnedRevenue;
+	private long accountsPayable;
+	private long shortTermBorrowings;
+	private long shortPortionOfLongDebt;
+
+	private long taxes;
+	private long shortTermDebt;
+	private long compensationAndBenefits;
+	private long currentDeferredIncome;
 		//NEED GETTER AND SETTER FOR THESE
-	private double employeeRelatedLiabilities;
-	private double accruedLiabilities;
-	private double netCurrentLiabilities;
+	private long netCurrentLiabilities;
 
 	//listing out long Term liabilities
-	private double longDebt;
-	private double otherLongDebt;
-	private double netLiabilities;
+	private long longDebt;
+	private long otherLongDebt;
+	private long netLiabilities;
+	
+	private long longDeferredIncome;
+
+	private long retirementObligations;
 
 	//listing out stockholders equity items
-	private double commonStock;
-	private double retainedEarnings;
-	private double treasuryStock;
-	private double netStockHoldersEquity;
+	private long commonStock;
+	private long retainedEarnings;
+	private long treasuryStock;
+	private long netStockHoldersEquity;
+
+	private long accumulatedOtherIncome;
+	private long noncontrollingInterests;
+	private long totalEquity;
 
 	//every BalanceSheet object will have a hashmap with Strings mapped to Functions to insert data to make the process efficient and easy
 	
@@ -58,43 +77,85 @@ public class BalanceSheet{
 		//everything starts out null, but on initialization of the object, we initialize the HashMap
 		//putting description for current assets
 		this.description= new HashMap<String,Method>();	
-		description.put("AvailableForSaleSecuritiesDebtSecuritiesCurrent",BalanceSheet.class.getMethod("setMarketableSecurities",double.class));
-		description.put("AccountsReceivableNetCurrent",BalanceSheet.class.getMethod("setAccountsReceivable",double.class));
-		description.put("NotesAndLoansReceivableNetCurrent",BalanceSheet.class.getMethod("setShortNotesReceivable",double.class));
-		description.put("CashAndCashEquivalentsAtCarryingValue",BalanceSheet.class.getMethod("setCash",double.class));
-		description.put("InventoryNet",BalanceSheet.class.getMethod("setInventoryNet",double.class));
-		description.put("InventoryFinishedGoodsNetOfReserves",BalanceSheet.class.getMethod("setInventoryFinished",double.class));
-		description.put("InventoryWorkInProcessAndRawMaterialsNetOfReserves",BalanceSheet.class.getMethod("setInventoryWorkInProcess",double.class));
-		description.put("PrepaidExpenseAndOtherAssetsCurrent",BalanceSheet.class.getMethod("setOtherCurrentAssets",double.class));
-		description.put("AssetsCurrent",BalanceSheet.class.getMethod("setNetCurrentAssets",double.class));
+		description.put("AvailableForSaleSecuritiesDebtSecuritiesCurrent",BalanceSheet.class.getMethod("setMarketableSecurities",long.class));
+		description.put("MarketableSecuritiesCurrent",BalanceSheet.class.getMethod("setMarketableSecurities",long.class));
+
+		description.put("AccountsReceivableNetCurrent",BalanceSheet.class.getMethod("setAccountsReceivable",long.class));
+		description.put("AccountsNotesAndLoansReceivableNetCurrent",BalanceSheet.class.getMethod("setAccountsReceivable",long.class));
+
+		description.put("NotesAndLoansReceivableNetCurrent",BalanceSheet.class.getMethod("setShortNotesReceivable",long.class));
+		description.put("CashAndCashEquivalentsAtCarryingValue",BalanceSheet.class.getMethod("setCash",long.class));
+		description.put("InventoryNet",BalanceSheet.class.getMethod("setInventoryNet",long.class));
+		description.put("InventoryFinishedGoodsNetOfReserves",BalanceSheet.class.getMethod("setInventoryFinished",long.class));
+		description.put("InventoryWorkInProcessAndRawMaterialsNetOfReserves",BalanceSheet.class.getMethod("setInventoryWorkInProcess",long.class));
+		description.put("PrepaidExpenseAndOtherAssetsCurrent",BalanceSheet.class.getMethod("setOtherCurrentAssetsAndPrepaidExpenses",long.class));
+		description.put("AssetsCurrent",BalanceSheet.class.getMethod("setNetCurrentAssets",long.class));
 
 		//putting description for long term assets
-		description.put("NotesAndLoansReceivableNetNoncurrent",BalanceSheet.class.getMethod("setLongNotesReceivable",double.class));
-		description.put("PropertyPlantAndEquipmentGross",BalanceSheet.class.getMethod("setPropertyPlantEquipment",double.class));
-		description.put("AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment",BalanceSheet.class.getMethod("setAccumulatedDepreciation",double.class));
-		description.put("PropertyPlantAndEquipmentNet",BalanceSheet.class.getMethod("setNetPropertyPlantEquipment",double.class));
-		description.put("OtherAssetsNoncurrent",BalanceSheet.class.getMethod("setOtherLongAssets",double.class));
-		description.put("Assets",BalanceSheet.class.getMethod("setNetAssets",double.class));
+		description.put("NotesAndLoansReceivableNetNoncurrent",BalanceSheet.class.getMethod("setLongNotesReceivable",long.class));
+		description.put("PropertyPlantAndEquipmentGross",BalanceSheet.class.getMethod("setPropertyPlantEquipment",long.class));
+		description.put("AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment",BalanceSheet.class.getMethod("setAccumulatedDepreciation",long.class));
+		description.put("PropertyPlantAndEquipmentNet",BalanceSheet.class.getMethod("setNetPropertyPlantEquipment",long.class));
+		description.put("Assets",BalanceSheet.class.getMethod("setNetAssets",long.class));
 
 		//putting description for short term liabilities
-		description.put("ShortTermBorrowings",BalanceSheet.class.getMethod("setShortTermBorrowings",double.class));
-		description.put("AccountsPayableCurrent",BalanceSheet.class.getMethod("setAccountsPayable",double.class));
-		description.put("LongTermDebtCurrent",BalanceSheet.class.getMethod("setShortPortionOfLongDebt",double.class));
-		description.put("RevenueRemainingPerformanceObligation",BalanceSheet.class.getMethod("setUnearnedRevenue",double.class));
-		description.put("EmployeeRelatedLiabilitiesCurrent",BalanceSheet.class.getMethod("setEmployeeRelatedLiabilities",double.class));
-		description.put("AccruedLiabilities",BalanceSheet.class.getMethod("setAccruedLiabilities",double.class));
-		description.put("LiabilitiesCurrent",BalanceSheet.class.getMethod("setNetCurrentLiabilities",double.class));
+		description.put("ShortTermBorrowings",BalanceSheet.class.getMethod("setShortTermBorrowings",long.class));
+		description.put("AccountsPayableCurrent",BalanceSheet.class.getMethod("setAccountsPayable",long.class));
+		description.put("LongTermDebtCurrent",BalanceSheet.class.getMethod("setShortPortionOfLongDebt",long.class));
+		description.put("LiabilitiesCurrent",BalanceSheet.class.getMethod("setNetCurrentLiabilities",long.class));
 
 		//putting description for long term debt
-		description.put("LongTermDebtNoncurrent",BalanceSheet.class.getMethod("setLongDebt",double.class));
-		description.put("OtherLiabilitiesNoncurrent",BalanceSheet.class.getMethod("setOtherLongDebt",double.class));
-		description.put("Liabilities",BalanceSheet.class.getMethod("setNetLiabilities",double.class));
+		description.put("LongTermDebtNoncurrent",BalanceSheet.class.getMethod("setLongDebt",long.class));
+		description.put("LongTermDebtAndCapitalLeaseObligations",BalanceSheet.class.getMethod("setLongDebt",long.class));
+
+		description.put("OtherLiabilitiesNoncurrent",BalanceSheet.class.getMethod("setOtherLongDebt",long.class));
+		description.put("Liabilities",BalanceSheet.class.getMethod("setNetLiabilities",long.class));
 		
 		//putting description for stockholders equity
-		description.put("CommonStocksIncludingAdditionalPaidInCapital",BalanceSheet.class.getMethod("setCommonStock",double.class));
-		description.put("RetainedEarningsAccumulatedDeficit",BalanceSheet.class.getMethod("setRetainedEarnings",double.class));
-		description.put("TreasuryStockCommonValue",BalanceSheet.class.getMethod("setTreasuryStock",double.class));
-		description.put("StockholdersEquity",BalanceSheet.class.getMethod("setNetStockHoldersEquity",double.class));
+		description.put("CommonStocksIncludingAdditionalPaidInCapital",BalanceSheet.class.getMethod("setCommonStock",long.class));
+		description.put("CommonStockIncludingAdditionalPaidInCapital",BalanceSheet.class.getMethod("setCommonStock",long.class));
+
+		description.put("RetainedEarningsAccumulatedDeficit",BalanceSheet.class.getMethod("setRetainedEarnings",long.class));
+		description.put("TreasuryStockCommonValue",BalanceSheet.class.getMethod("setTreasuryStock",long.class));
+		description.put("TreasuryStockValue",BalanceSheet.class.getMethod("setTreasuryStock",long.class));
+
+		description.put("StockholdersEquity",BalanceSheet.class.getMethod("setNetStockHoldersEquity",long.class));
+		//description i missed (maybe need to reorder)
+
+		description.put("DefinedBenefitPlanAssetsForPlanBenefitsNoncurrent",BalanceSheet.class.getMethod("setPrepaidPension",long.class));
+		description.put("PrepaidPensionCosts",BalanceSheet.class.getMethod("setPrepaidPension",long.class));
+
+		description.put("DeferredIncomeTaxAssetsNet",BalanceSheet.class.getMethod("setDeferredTaxes",long.class));
+		description.put("DeferredIncomeTaxAssetsNetCurrent",BalanceSheet.class.getMethod("setDeferredCurrentTaxes",long.class));
+		description.put("DeferredIncomeTaxAssetsNetNoncurrent",BalanceSheet.class.getMethod("setDeferredLongTaxes",long.class));
+
+
+		description.put("Goodwill",BalanceSheet.class.getMethod("setGoodwill",long.class));
+		description.put("FiniteLivedIntangibleAssetsNet",BalanceSheet.class.getMethod("setIntangibleAssets",long.class));
+		description.put("IntangibleAssetsNetExcludingGoodwill",BalanceSheet.class.getMethod("setIntangibleAssets",long.class));
+
+		description.put("InvestmentsAndOtherNoncurrentAssets",BalanceSheet.class.getMethod("setLongInvestments",long.class));
+		description.put("OtherAssetsNoncurrent",BalanceSheet.class.getMethod("setLongInvestments",long.class));
+
+		description.put("TaxesPayableCurrent",BalanceSheet.class.getMethod("setTaxes",long.class));
+		description.put("DebtCurrent",BalanceSheet.class.getMethod("setShortTermDebt",long.class));
+		description.put("EmployeeRelatedLiabilitiesCurrent",BalanceSheet.class.getMethod("setCompensationAndBenefits",long.class));
+		description.put("DeferredCompensationLiabilityCurrent",BalanceSheet.class.getMethod("setCompensationAndBenefits",long.class));
+
+		description.put("PensionAndOtherPostretirementDefinedBenefitPlansLiabilitiesNoncurrent",BalanceSheet.class.getMethod("setRetirementObligations",long.class));
+		description.put("ContractWithCustomerLiabilityCurrent",BalanceSheet.class.getMethod("setCurrentDeferredIncome",long.class));
+		description.put("DeferredRevenueCurrent",BalanceSheet.class.getMethod("setCurrentDeferredIncome",long.class));
+
+		description.put("ContractWithCustomerLiabilityNoncurrent",BalanceSheet.class.getMethod("setLongDeferredIncome",long.class));
+		description.put("DeferredRevenueNoncurrent",BalanceSheet.class.getMethod("setLongDeferredIncome",long.class));
+
+		description.put("AccumulatedOtherComprehensiveIncomeLossNetOfTax",BalanceSheet.class.getMethod("setAccumulatedOtherIncome",long.class));
+		description.put("MinorityInterest",BalanceSheet.class.getMethod("setNoncontrollingInterests",long.class));
+		description.put("StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",BalanceSheet.class.getMethod("setTotalEquity",long.class));
+
+
+		
+
 	}
 
 	//logic for adding values to the BalanceSheet
@@ -112,7 +173,7 @@ public class BalanceSheet{
 			} else {
 				String date = XMLParser.getDate(line);
 				if (XMLParser.sameYear(date,year)) {
-					double data = XMLParser.getData(line);
+					long data = XMLParser.getData(line);
 					//then the year matches what the user needs and we can store the data
 					Method toDo = this.description.get(context);
 					toDo.invoke(this,data);
@@ -134,242 +195,347 @@ public class BalanceSheet{
 
 	//getter and setter methods for each private entry:
 	
-	public void setMarketableSecurities(double marketableSecurities){
+	public void setMarketableSecurities(long marketableSecurities){
 		this.marketableSecurities=marketableSecurities;
 	}
 
-	public double getMarketableSecurities(){
+	public long getMarketableSecurities(){
 		return this.marketableSecurities;
 	}
 	
-	public void setAccountsReceivable(double accountsReceivable) {
+	public void setAccountsReceivable(long accountsReceivable) {
 		this.accountsReceivable=accountsReceivable;
 	}
 	
-	public double getAccountsReceivable() {
+	public long getAccountsReceivable() {
 		return this.accountsReceivable;
 	}
 
-	public void setShortNotesReceivable(double shortNotesReceivable) {
+	public void setShortNotesReceivable(long shortNotesReceivable) {
 		this.shortNotesReceivable=shortNotesReceivable;
 	}
 
-	public double getShortNotesReceivable() {
+	public long getShortNotesReceivable() {
 		return this.shortNotesReceivable;
 	}
 
-	public void setCash(double cash) {
+	public void setCash(long cash) {
 		this.cash=cash;
 	}
 
-	public double getCash() {
+	public long getCash() {
 		return this.cash;
 	}
 
-	public void setInventoryNet(double inventoryNet) {
+	public void setInventoryNet(long inventoryNet) {
 		this.inventoryNet=inventoryNet;
 	}
 
-	public double getInventoryNet() {
+	public long getInventoryNet() {
 		return this.inventoryNet;
 	}
 
-	public void setInventoryFinished(double inventoryFinished) {
+	public void setInventoryFinished(long inventoryFinished) {
 		this.inventoryFinished=inventoryFinished;
 	}
 
-	public double getInventoryFinished() {
+	public long getInventoryFinished() {
 		return this.inventoryFinished;
 	}
 
-	public void setInventoryWorkInProcess(double inventoryWorkInProcess) {
+	public void setInventoryWorkInProcess(long inventoryWorkInProcess) {
 		this.inventoryWorkInProcess=inventoryWorkInProcess;
 	}
 
-	public double getInventoryWorkInProcess() {
+	public long getInventoryWorkInProcess() {
 		return this.inventoryWorkInProcess;
 	}
 
-	public void setOtherCurrentAssets(double otherCurrentAssets) {
-		this.otherCurrentAssets=otherCurrentAssets;
+	public void setOtherCurrentAssetsAndPrepaidExpenses(long otherCurrentAssets) {
+		this.otherCurrentAssetsAndPrepaidExpenses=otherCurrentAssets;
 	}
 
-	public double getOtherCurrentAssets() {
-		return this.otherCurrentAssets;
+	public long getOtherCurrentAssetsAndPrepaidExpenses() {
+		return this.otherCurrentAssetsAndPrepaidExpenses;
 	}
 
-	public void setNetCurrentAssets(double netCurrentAssets) {
+	public void setNetCurrentAssets(long netCurrentAssets) {
 		this.netCurrentAssets=netCurrentAssets;
 	}
 
-	public double getNetCurrentAssets() {
+	public long getNetCurrentAssets() {
 		return this.netCurrentAssets;
 	}
 	
-	public void setLongNotesReceivable(double longNotesReceivable ) {
+	public void setLongNotesReceivable(long longNotesReceivable ) {
 		this.longNotesReceivable=longNotesReceivable;
 	}
 
-	public double getLongNotesReceivable(){
+	public long getLongNotesReceivable(){
 		return this.longNotesReceivable;
 	}
 
-	public void setPropertyPlantEquipment(double propertyPlantEquipment) {
+	public void setPropertyPlantEquipment(long propertyPlantEquipment) {
 		this.propertyPlantEquipment=propertyPlantEquipment;
 	}
 
-	public double getPropertyPlantEquipment() {
+	public long getPropertyPlantEquipment() {
 		return this.propertyPlantEquipment;
 	}
 
 
-	public void setAccumulatedDepreciation(double accumulatedDepreciation){
+	public void setAccumulatedDepreciation(long accumulatedDepreciation){
 		this.accumulatedDepreciation=accumulatedDepreciation;
 	}
 
-	public double getAccumulatedDepreciation() {
+	public long getAccumulatedDepreciation() {
 		return this.accumulatedDepreciation;
 	}
 
-	public void setNetPropertyPlantEquipment(double netPropertyPlantEquipment) {
+	public void setNetPropertyPlantEquipment(long netPropertyPlantEquipment) {
 		this.netPropertyPlantEquipment=netPropertyPlantEquipment;
 	}
 
-	public double getNetPropertyPlantEquipment() {
+	public long getNetPropertyPlantEquipment() {
 		return this.netPropertyPlantEquipment;
 	}
 
-	public void setOtherLongAssets(double otherLongAssets) {
-		this.otherLongAssets=otherLongAssets;
-	}
 
-	public double getOtherLongAssets() {
-		return this.otherLongAssets;
-	}
 
-	public void setNetAssets(double netAssets) {
+	public void setNetAssets(long netAssets) {
 		this.netAssets=netAssets;
 	}
 
-	public double getNetAssets() {
+	public long getNetAssets() {
 		return this.netAssets;
 	}
 	
-	public void setAccountsPayable(double accountsPayable) {
+	public void setAccountsPayable(long accountsPayable) {
 		this.accountsPayable=accountsPayable;
 	}
 
-	public double getAccountsPayable() {
+	public long getAccountsPayable() {
 		return this.accountsPayable;
 	}
 
-	public void setShortTermBorrowings(double shortTermBorrowings) {
+	public void setShortTermBorrowings(long shortTermBorrowings) {
 		this.shortTermBorrowings=shortTermBorrowings;
 	}
 
-	public double getShortTermBorrowings() {
+	public long getShortTermBorrowings() {
 		return this.shortTermBorrowings;
 	}
 
-	public void setUnearnedRevenue(double unearnedRevenue) {
-		this.unearnedRevenue=unearnedRevenue;
-	}
 
-	public double getUnearnedRevenue() {
-		return this.unearnedRevenue;
-	} 
 
-	public void setShortPortionOfLongDebt(double shortPortionOfLongDebt) {
+	public void setShortPortionOfLongDebt(long shortPortionOfLongDebt) {
 		this.shortPortionOfLongDebt=shortPortionOfLongDebt;
 	}
 
-	public double getShortPortionOfLongDebt() {
+	public long getShortPortionOfLongDebt() {
 		return this.shortPortionOfLongDebt;
 	}
 	
-	public void setEmployeeRelatedLiabilities(double employeeRelatedLiabilities) {
-		this.employeeRelatedLiabilities=employeeRelatedLiabilities;
-	}
 
-	public double getEmployeeRelatedLiabilities() {
-		return this.employeeRelatedLiabilities;
-	}
 
-	public void setAccruedLiabilities(double accruedLiabilities) {
-		this.accruedLiabilities=accruedLiabilities;
-	}
 
-	public double getAccruedLiabilities() {
-		return this.accruedLiabilities;
-	}
 
-	public void setNetCurrentLiabilities(double netCurrentLiabilities) {
+	public void setNetCurrentLiabilities(long netCurrentLiabilities) {
 		this.netCurrentLiabilities=netCurrentLiabilities;
 	}
 
-	public double getNetCurrentLiabilities() {
+	public long getNetCurrentLiabilities() {
 		return this.netCurrentLiabilities;
 	}
 
-	public void setLongDebt(double longDebt) {
+	public void setLongDebt(long longDebt) {
 		this.longDebt=longDebt;
 	}
 
-	public double getLongDebt() {
+	public long getLongDebt() {
 		return this.longDebt;
 	}
 
-	public void setOtherLongDebt(double otherLongDebt) {
+	public void setOtherLongDebt(long otherLongDebt) {
 		this.otherLongDebt=otherLongDebt;
 	}
 
-	public double getOtherLongDebt() {
+	public long getOtherLongDebt() {
 		return this.otherLongDebt;
 	}
 	
-	public void setNetLiabilities(double netLiabilities) {
+	public void setNetLiabilities(long netLiabilities) {
 		this.netLiabilities=netLiabilities;
 	}
 
-	public double getNetLiabilities() {
+	public long getNetLiabilities() {
 		return this.netLiabilities;
 	}
 
-	public void setCommonStock(double commonStock) {
+	public void setCommonStock(long commonStock) {
 		this.commonStock=commonStock;
 	}
 
-	public double getCommonStock() {
+	public long getCommonStock() {
 		return this.commonStock;
 	}
 
-	public void setRetainedEarnings(double retainedEarnings) {
+	public void setRetainedEarnings(long retainedEarnings) {
 		this.retainedEarnings=retainedEarnings;
 	}
 
-	public double getRetainedEarnings() {
+	public long getRetainedEarnings() {
 		return this.retainedEarnings;
 	}
 
-	public void setTreasuryStock(double treasuryStock) {
+	public void setTreasuryStock(long treasuryStock) {
 		this.treasuryStock=treasuryStock;
 	}
 
-	public double getTreasuryStock() {
+	public long getTreasuryStock() {
 		return this.treasuryStock;
 	}
 
-	public void setNetStockHoldersEquity(double netStockHoldersEquity) {
+	public void setNetStockHoldersEquity(long netStockHoldersEquity) {
 		this.netStockHoldersEquity=netStockHoldersEquity;
 	}
 
-	public double getNetStockHoldersEquity() {
+	public long getNetStockHoldersEquity() {
 		return this.netStockHoldersEquity;
+	}
+
+	public void setPrepaidPension(long prepaidPension){
+		this.prepaidPension=prepaidPension;
+	}
+
+	public long getPrepaidPension(){
+		return this.prepaidPension;
+	}
+
+	public void setDeferredTaxes(long DeferredTaxes){
+		this.deferredTaxes=DeferredTaxes;
+	}
+
+	public long getDeferredTaxes(){
+		return this.deferredTaxes;
+	}
+
+	public void setGoodwill(long Goodwill){
+		this.goodwill=Goodwill;
+	}
+
+	public long getGoodwill(){
+		return this.goodwill;
+	}
+
+	public void setIntangibleAssets(long intangibleAssets){
+		this.intangibleAssets=intangibleAssets;
+	}
+
+	public long getIntangibleAssets(){
+		return this.intangibleAssets;
+	}
+
+	public void setLongInvestments(long longInvestments){
+		this.longInvestments=longInvestments;
+	}
+
+	public long getLongInvestments(){
+		return this.longInvestments;
 	}
 
 
 
+	public void setTaxes(long taxes){
+		this.taxes=taxes;
+	}
+
+	public long getTaxes(){
+		return this.taxes;
+	}
+
+	public void setShortTermDebt(long shortTermDebt){
+		this.shortTermDebt=shortTermDebt;
+	}
+
+	public long getShortTermDebt(){
+		return this.shortTermDebt;
+	}
+
+	public void setCompensationAndBenefits(long compensationAndBenefits){
+		this.compensationAndBenefits=compensationAndBenefits;
+	}
+
+	public long getCompensationAndBenefits(){
+		return this.compensationAndBenefits;
+	}
+
 	
+	public void setRetirementObligations(long retirementObligations){
+		this.retirementObligations=retirementObligations;
+	}
+
+	public long getRetirementObligations(){
+		return this.retirementObligations;
+	}
+
+	public void setCurrentDeferredIncome(long deferredIncome){
+		this.currentDeferredIncome=deferredIncome;
+	}
+
+	public long getCurrentDeferredIncome(){
+		return this.currentDeferredIncome;
+	}
+
+	public void setLongDeferredIncome(long A){
+		this.longDeferredIncome=A;
+	}
+
+	public long getLongDeferredIncome(){
+		return this.longDeferredIncome;
+	}
+
+	public void setAccumulatedOtherIncome(long accumulatedOtherIncome){
+		this.accumulatedOtherIncome=accumulatedOtherIncome;
+	}
+
+	public long getAccumulatedOtherIncome(){
+		return this.accumulatedOtherIncome;
+	}
+
+	public void setNoncontrollingInterests(long noncontrollingInterests){
+		this.noncontrollingInterests=noncontrollingInterests;
+	}
+
+	public long getNoncontrollingInterests(){
+		return this.noncontrollingInterests;
+	}
+
+	public void setTotalEquity(long totalEquity){
+		this.totalEquity=totalEquity;
+	}
+
+	public long getTotalEquity(){
+		return this.totalEquity;
+	}
+
+	public void setDeferredCurrentTaxes(long deferredCurrentTaxes){
+		this.deferredCurrentTaxes=deferredCurrentTaxes;
+	}
+
+	public long getDeferredCurrentTaxes(){
+		return this.deferredCurrentTaxes;
+	}
+
+	public void setDeferredLongTaxes(long DeferredLongTaxes){
+		this.deferredLongTaxes=DeferredLongTaxes;
+	}
+
+	public long getDeferredLongTaxes(){
+		return this.deferredLongTaxes;
+	}
+
+
 
 
 
