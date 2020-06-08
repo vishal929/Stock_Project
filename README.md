@@ -25,3 +25,5 @@ I am planning on implementing an API to get stock prices as well to help with an
 
 
 BIG PROBLEM: SEC is very lax in their xbrl format: the us_gaap namespaces change from year to year, so it is very hard to actually scrape the data because I need to account for all possible namespaces. If I cannot figure out how to solve this, then I at least learned practices of logging,YAML list format, and scraping.  
+
+IN ADDITION: Even between companies on the same exchange, I have noticed that companies will use a completely different format for their xblr namespace. This makes my job very difficult, and honestly, I am not too keen on putting 1500+ different configurations depending on the ticker.
